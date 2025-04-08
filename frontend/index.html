@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groq AI Assistant</title>
+    <!-- Add this in the head section of your HTML -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Optional: Add Prism.js for code highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-python.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-robot"></i>
+                <h1>GroqVerse</h1>
+            </div>
+            
+            <div class="language-selector">
+                <label for="language-select">Language:</label>
+                <select id="language-select">
+                    <option value="en" selected>English</option>
+                    <!-- Other languages will be populated dynamically -->
+                </select>
+            </div>
+            
+            <div class="input-options">
+                <button id="clear-btn" class="option-btn">
+                    <i class="fa-solid fa-trash"></i>
+                    <span>Clear Chat</span>
+                </button>
+            </div>
+            
+            <div class="info">
+                <p>Powered by Groq's LLM API</p>
+                <p>Made by Harsh Shrivastava</p>
+                <p>Email - hshrivastava23032007@gmail.com</p>
+                <p class="response-time">Average response time: <span id="avg-response-time">0.0s</span></p>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="chat-container" id="chat-container">
+                <div class="welcome-message">
+                    <h2>Welcome to the Groq AI Assistant!</h2>
+                    <p>Ask me anything or try uploading an image or recording your voice.</p>
+                </div>
+                <!-- Chat messages will appear here -->
+            </div>
+            
+            <div class="input-container">
+                <div class="input-options">
+                    <button id="voice-btn" class="option-btn" title="Voice Input">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                    <button id="image-btn" class="option-btn" title="Image Upload">
+                        <i class="fa-solid fa-image"></i>
+                    </button>
+                    <input type="file" id="image-upload" accept="image/*" style="display: none;">
+                </div>
+                
+                <div class="text-input-container">
+                    <textarea id="user-input" placeholder="Type your message here..." rows="1"></textarea>
+                    <button id="send-btn" class="send-btn">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="recording-indicator" class="recording-indicator">
+                <div class="recording-pulse"></div>
+                <p>Recording... <span id="recording-time">0s</span></p>
+                <button id="stop-recording-btn">Stop</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p id="loading-text">Processing your request...</p>
+    </div>
+    
+    <div id="image-preview-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Image Preview</h3>
+            <img id="image-preview" src="" alt="Preview">
+            <div class="image-prompt-container">
+                <input type="text" id="image-prompt" placeholder="What would you like to know about this image?">
+                <button id="image-submit-btn">Submit</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="scripts.js"></script>
+</body>
+</html>

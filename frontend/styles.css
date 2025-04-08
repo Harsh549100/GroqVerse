@@ -1,0 +1,881 @@
+/* General Styles and Variables */
+:root {
+    --primary-color: #6a11cb;
+    --primary-light: #8856e6;
+    --secondary-color: #2575fc;
+    --text-color: #333333;
+    --light-text: #ffffff;
+    --background: #f9f9f9;
+    --chat-bg: #ffffff;
+    --user-msg-bg: #e9f3ff;
+    --ai-msg-bg: #f0f0f0;
+    --border-radius: 12px;
+    --transition: all 0.3s ease;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: var(--background);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+/* Container Layout */
+.container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: var(--light-text);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 10px;
+}
+
+.logo i {
+    font-size: 24px;
+}
+
+.logo h1 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.language-selector {
+    margin-bottom: 20px;
+}
+
+.language-selector label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.language-selector select {
+    width: 100%;
+    padding: 10px;
+    border-radius: var(--border-radius);
+    border: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--light-text);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: calc(100% - 12px) center;
+    padding-right: 35px;
+}
+
+.language-selector select:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.language-selector select option {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    padding: 10px;
+}
+
+/* Dark mode support for dropdown options */
+body.dark-mode .language-selector select option {
+    background-color: #2a2a2a;
+    color: var(--light-text);
+}
+
+/* Ensure dropdown options are visible and scrollable */
+.language-selector select[size] {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Scrollbar styling */
+.language-selector select::-webkit-scrollbar {
+    width: 8px;
+}
+
+.language-selector select::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.language-selector select::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+.language-selector select::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.sidebar .input-options {
+    margin-bottom: 20px;
+}
+
+.option-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: var(--light-text);
+    padding: 10px 15px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.option-btn:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.info {
+    margin-top: auto;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.response-time {
+    margin-top: 8px;
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.chat-container {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: var(--chat-bg);
+}
+
+/* Enhanced Welcome Message with Typewriter Effect */
+.welcome-message {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: rgba(106, 17, 203, 0.05);
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-message h1 {
+    display: inline-block;
+    overflow: hidden;
+    border-right: 2px solid var(--primary-color);
+    white-space: nowrap;
+    margin: 0 auto;
+    animation: typing 3.5s steps(40, end),
+               blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: var(--primary-color) }
+}
+
+/* Enhanced Message Animation */
+.message {
+    display: flex;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: popIn 0.5s ease forwards;
+    transform-origin: center;
+}
+
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+    }
+    70% {
+        transform: scale(1.05) translateY(-2px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Enhanced Dark Mode Transition */
+body, .container, .sidebar, .main-content, .chat-container,
+.message-content, .input-container, .modal-content {
+    transition: background-color 0.5s ease,
+                color 0.5s ease,
+                border-color 0.5s ease,
+                box-shadow 0.5s ease;
+}
+
+/* Mic Button Pulse Animation */
+.option-btn.recording {
+    position: relative;
+}
+
+.option-btn.recording::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--border-radius);
+    border: 2px solid var(--primary-color);
+    animation: micPulse 1.5s infinite;
+}
+
+@keyframes micPulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.2);
+        opacity: 0;
+    }
+}
+
+/* Enhanced Image Hover Effect */
+.message-image {
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.message-image:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+/* Loading Skeleton Effect */
+.skeleton-loading {
+    background: linear-gradient(
+        90deg,
+        var(--ai-msg-bg) 25%,
+        var(--chat-bg) 50%,
+        var(--ai-msg-bg) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--border-radius);
+    height: 60px;
+    margin-bottom: 16px;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Dark Mode Toggle Enhancement */
+.slider {
+    overflow: hidden;
+    transition: background-color 0.3s ease;
+}
+
+.slider:before {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+    background-color: #121212;
+}
+
+.user-message {
+    justify-content: flex-end;
+}
+
+.ai-message {
+    justify-content: flex-start;
+}
+
+.message-content {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: var(--border-radius);
+    position: relative;
+}
+
+.user-message .message-content {
+    background-color: var(--user-msg-bg);
+    border-bottom-right-radius: 0;
+}
+
+.ai-message .message-content {
+    background-color: var(--ai-msg-bg);
+    border-bottom-left-radius: 0;
+}
+
+.message-meta {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+    text-align: right;
+}
+
+.user-message .message-meta {
+    text-align: right;
+}
+
+.ai-message .message-meta {
+    text-align: left;
+}
+
+/* Input Area */
+.input-container {
+    background-color: var(--chat-bg);
+    padding: 15px 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-options {
+    display: flex;
+    gap: 10px;
+}
+
+.input-container .option-btn {
+    background-color: #f0f0f0;
+    color: var(--text-color);
+    padding: 8px;
+    width: auto;
+}
+
+.input-container .option-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.text-input-container {
+    display: flex;
+    width: 100%;
+}
+
+#user-input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    resize: none;
+    transition: var(--transition);
+    min-height: 24px;
+    max-height: 120px;
+}
+
+#user-input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 2px rgba(136, 86, 230, 0.2);
+}
+
+.send-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.send-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+/* Recording Indicator */
+.recording-indicator {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 30px;
+    display: none;
+    align-items: center;
+    gap: 15px;
+    z-index: 10;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translate(-50%, 20px); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.recording-pulse {
+    width: 15px;
+    height: 15px;
+    background-color: #ff3b30;
+    border-radius: 50%;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+#stop-recording-btn {
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+#stop-recording-btn:hover {
+    background-color: #f1f1f1;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.loading-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+/* Loading Spinner */
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-light);
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#loading-text {
+    color: white;
+    font-size: 16px;
+}
+
+/* Image Preview Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    width: 80%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+#image-preview {
+    max-width: 100%;
+    max-height: 400px;
+    display: block;
+    margin: 15px auto;
+    border-radius: 8px;
+}
+
+.image-prompt-container {
+    display: flex;
+    margin-top: 15px;
+    gap: 10px;
+}
+
+#image-prompt {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+}
+
+#image-submit-btn {
+    padding: 0 20px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+#image-submit-btn:hover {
+    opacity: 0.9;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        padding: 15px;
+    }
+    
+    .logo {
+        margin-bottom: 15px;
+    }
+    
+    .language-selector,
+    .sidebar .input-options {
+        margin-bottom: 10px;
+    }
+    
+    .info {
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .message-content {
+        max-width: 85%;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 15% auto;
+    }
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+.flex {
+    display: flex;
+}
+
+/* Image in Chat */
+.message-image {
+    max-width: 300px;
+    max-height: 200px;
+    border-radius: 8px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.message-image:hover {
+    transform: scale(1.05);
+}
+
+/* Code Block Styling */
+pre {
+    background-color: #282c34;
+    color: #abb2bf;
+    padding: 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 10px 0;
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+code {
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+/* Typing Indicator */
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 15px;
+    background-color: var(--ai-msg-bg);
+    border-radius: var(--border-radius);
+    border-bottom-left-radius: 0;
+    width: fit-content;
+    margin-bottom: 16px;
+    animation: fadeIn 0.3s ease;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #888;
+    border-radius: 50%;
+    animation: typingAnimation 1s infinite;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingAnimation {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-8px); }
+}
+
+/* Modern UI Enhancements */
+
+/* Base Styles & Dark Mode */
+:root {
+    --primary-color: #4a6cf7;
+    --secondary-color: #6c757d;
+    --background-color: #f8f9fa;
+    --text-color: #212529;
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --glassmorphism-bg: rgba(255, 255, 255, 0.7);
+    --glassmorphism-border: rgba(255, 255, 255, 0.5);
+    --transition-speed: 0.3s;
+    
+    /* Add these variables to ensure dark mode affects all elements */
+    --chat-bg: #ffffff;
+    --user-msg-bg: #e9f3ff;
+    --ai-msg-bg: #f0f0f0;
+}
+
+body.dark-mode {
+    --primary-color: #6d8dff;
+    --secondary-color: #adb5bd;
+    --background-color: #121212;
+    --text-color: #f8f9fa;
+    --card-bg: rgba(30, 30, 30, 0.8);
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --glassmorphism-bg: rgba(30, 30, 30, 0.7);
+    --glassmorphism-border: rgba(50, 50, 50, 0.5);
+    
+    /* Add dark mode values for these variables */
+    --chat-bg: #1e1e1e;
+    --user-msg-bg: #2a4060;
+    --ai-msg-bg: #2a2a2a;
+    --background: #121212;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.5s ease, color 0.5s ease;
+    overflow-x: hidden;
+}
+
+/* Fix for theme transition - ensure all elements transition smoothly */
+.theme-transition * {
+    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease !important;
+}
+
+/* Ensure the dark mode toggle is visible and working */
+.dark-mode-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    cursor: pointer;
+}
+
+.slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #f4f4f4;
+    transition: 0.4s;
+    border-radius: 34px;
+    overflow: hidden;
+}
+
+.slider:before {
+    position: absolute;
+    content: "🌞";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+    font-size: 16px;
+}
+
+input:checked + .slider {
+    background-color: #2a2a2a;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+    content: "🌙";
+    background-color: #484848;
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Fix animation classes to ensure they work properly */
+.message-animate-in {
+    animation: messageSlideIn 0.5s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes messageSlideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ensure the parallax background works */
+.parallax-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.parallax-shape {
+    position: absolute;
+    background: linear-gradient(45deg, var(--primary-color), transparent);
+    opacity: 0.1;
+    animation: float 15s infinite ease-in-out;
+}
+
+/* Fix for the pulse animation */
+.pulse-animation {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(var(--primary-color), 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(var(--primary-color), 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(var(--primary-color), 0);
+    }
+}
+
+/* Ensure notifications work properly */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    background: var(--card-bg);
+    color: var(--text-color);
+    box-shadow: 0 4px 12px var(--shadow-color);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
