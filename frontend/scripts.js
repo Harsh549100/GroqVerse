@@ -8,6 +8,10 @@ let recordingTimer = null;
 let recordingSeconds = 0;
 let imageBase64 = null;
 let darkMode = localStorage.getItem('darkMode') === 'true';
+// Initialize dark mode state
+if (darkMode) {
+    document.body.classList.add('dark-mode');
+}
 
 // DOM Elements
 const chatContainer = document.getElementById('chat-container');
@@ -258,14 +262,19 @@ function addMessageToChat(role, content) {
 // UI Enhancement Functions
 function toggleDarkMode() {
     darkMode = !darkMode;
-    body.classList.toggle('dark-mode');
+    document.body.classList.toggle('dark-mode');
     localStorage.setItem('darkMode', darkMode);
     
     // Add transition animation
-    body.classList.add('theme-transition');
+    document.body.classList.add('theme-transition');
     setTimeout(() => {
-        body.classList.remove('theme-transition');
+        document.body.classList.remove('theme-transition');
     }, 1000);
+    
+    // Update toggle button state
+    if (darkModeToggle) {
+        darkModeToggle.checked = darkMode;
+    }
 }
 
 function createDarkModeToggle() {

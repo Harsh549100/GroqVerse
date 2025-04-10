@@ -705,16 +705,23 @@ code {
     --secondary-color: #6c757d;
     --background-color: #f8f9fa;
     --text-color: #212529;
-    --card-bg: rgba(255, 255, 255, 0.8);
+    --card-bg: rgba(255, 255, 255, 0.95);
     --shadow-color: rgba(0, 0, 0, 0.1);
-    --glassmorphism-bg: rgba(255, 255, 255, 0.7);
+    --glassmorphism-bg: rgba(255, 255, 255, 0.85);
     --glassmorphism-border: rgba(255, 255, 255, 0.5);
     --transition-speed: 0.3s;
+    --accent-color: #ff6b6b;
+    --success-color: #51cf66;
+    --warning-color: #ffd43b;
     
-    /* Add these variables to ensure dark mode affects all elements */
+    /* Enhanced variables for better theme consistency */
     --chat-bg: #ffffff;
     --user-msg-bg: #e9f3ff;
     --ai-msg-bg: #f0f0f0;
+    --input-bg: rgba(255, 255, 255, 0.9);
+    --button-hover-bg: rgba(74, 108, 247, 0.1);
+    --scrollbar-thumb: rgba(74, 108, 247, 0.3);
+    --scrollbar-track: rgba(0, 0, 0, 0.05);
 }
 
 body.dark-mode {
@@ -722,16 +729,23 @@ body.dark-mode {
     --secondary-color: #adb5bd;
     --background-color: #121212;
     --text-color: #f8f9fa;
-    --card-bg: rgba(30, 30, 30, 0.8);
+    --card-bg: rgba(30, 30, 30, 0.95);
     --shadow-color: rgba(0, 0, 0, 0.3);
-    --glassmorphism-bg: rgba(30, 30, 30, 0.7);
+    --glassmorphism-bg: rgba(30, 30, 30, 0.85);
     --glassmorphism-border: rgba(50, 50, 50, 0.5);
+    --accent-color: #ff8787;
+    --success-color: #69db7c;
+    --warning-color: #ffd43b;
     
-    /* Add dark mode values for these variables */
-    --chat-bg: #1e1e1e;
-    --user-msg-bg: #2a4060;
+    /* Enhanced dark mode values */
+    --chat-bg: #1a1a1a;
+    --user-msg-bg: #2d4b8a;
     --ai-msg-bg: #2a2a2a;
     --background: #121212;
+    --input-bg: rgba(40, 40, 40, 0.9);
+    --button-hover-bg: rgba(109, 141, 255, 0.15);
+    --scrollbar-thumb: rgba(109, 141, 255, 0.3);
+    --scrollbar-track: rgba(255, 255, 255, 0.05);
 }
 
 body {
@@ -741,9 +755,45 @@ body {
     overflow-x: hidden;
 }
 
-/* Fix for theme transition - ensure all elements transition smoothly */
+/* Enhanced theme transition with smooth animations */
 .theme-transition * {
-    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease !important;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* Enhanced button animations */
+button {
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px var(--shadow-color);
+}
+
+button:active {
+    transform: translateY(0);
 }
 
 /* Ensure the dark mode toggle is visible and working */
@@ -878,4 +928,129 @@ input:checked + .slider:before {
 .notification.show {
     transform: translateY(0);
     opacity: 1;
+}
+
+/* Enhanced Button Hover Effects */
+.option-btn, .send-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.option-btn:after, .send-btn:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: -100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+    transition: 0.5s;
+}
+
+.option-btn:hover:after, .send-btn:hover:after {
+    left: 100%;
+}
+
+/* Enhanced Welcome Message */
+.welcome-message {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-message h2 {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientFlow 3s ease infinite;
+}
+
+@keyframes gradientFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Message Hover Effects */
+.message-content {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.message-content:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar Enhancement */
+.sidebar {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    background-size: 200% 200%;
+    animation: gradientMove 15s ease infinite;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Input Field Enhancement */
+#user-input {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    background: 
+        linear-gradient(var(--chat-bg), var(--chat-bg)) padding-box,
+        linear-gradient(135deg, var(--primary-color), var(--secondary-color)) border-box;
+}
+
+#user-input:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(var(--primary-color), 0.15);
+}
+
+/* Loading Spinner Enhancement */
+.loading-spinner {
+    box-shadow: 0 0 15px var(--primary-color);
+    animation: spin 1s ease-in-out infinite, glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 15px var(--primary-color); }
+    50% { box-shadow: 0 0 30px var(--primary-color); }
+}
+
+/* Modal Enhancement */
+.modal-content {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transform-origin: top;
+}
+
+.close-modal {
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.close-modal:hover {
+    transform: rotate(90deg);
+    color: var(--primary-color);
+}
+
+/* Dark Mode Toggle Enhancement */
+.dark-mode-container {
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.dark-mode-container:hover {
+    transform: scale(1);
+}
+
+.slider:before {
+    animation: rotate 0.5s ease;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }

@@ -8,77 +8,113 @@ import time
 from utils.groq_client import GroqClient
 from utils.audio_processor import transcribe_audio
 from utils.image_processor import process_image
+import logging
 
 # Load environment variables
 load_dotenv()
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)
+
+# Verify API key exists
+if not os.getenv("GROQ_API_KEY"):
+    raise ValueError("GROQ_API_KEY environment variable is not set")
 
 # Initialize Groq client
-groq_client = GroqClient(api_key=os.getenv("GROQ_API_KEY"))
+try:
+    groq_client = GroqClient(api_key=os.getenv("GROQ_API_KEY"))
+except Exception as e:
+    logger.error(f"Failed to initialize Groq client: {str(e)}")
+    raise
 
-# Store conversation history in memory (in production, use a database)
+# Store conversation history
 conversations = {}
+
+def validate_session(session_id):
+    """Validate and return session ID."""
+    return session_id if session_id else str(uuid.uuid4())
+
+@app.errorhandler(Exception)
+def handle_error(error):
+    """Global error handler"""
+    logger.error(f"An error occurred: {str(error)}")
+    return jsonify({
+        "error": "An internal error occurred",
+        "details": str(error)
+    }), 500
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
     """Handle text-based chat requests."""
-    data = request.json
-    user_input = data.get('message', '')
-    session_id = data.get('sessionId', str(uuid.uuid4()))
-    language = data.get('language', 'en')
-    
-    # Get or create conversation history
-    if session_id not in conversations:
-        conversations[session_id] = []
-    
-    # Add user message to history
-    conversations[session_id].append({"role": "user", "content": user_input})
-    
-    # Get response from Groq
-    start_time = time.time()
-    response = groq_client.generate_response(
-        conversations[session_id], 
-        language=language
-    )
-    end_time = time.time()
-    
-    # Add assistant response to history
-    conversations[session_id].append({"role": "assistant", "content": response})
-    
-    return jsonify({
-        "response": response,
-        "sessionId": session_id,
-        "processingTime": round(end_time - start_time, 2)
-    })
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+
+        user_input = data.get('message', '').strip()
+        if not user_input:
+            return jsonify({"error": "Message cannot be empty"}), 400
+
+        session_id = validate_session(data.get('sessionId'))
+        language = data.get('language', 'en')
+
+        if session_id not in conversations:
+            conversations[session_id] = []
+        
+        conversations[session_id].append({"role": "user", "content": user_input})
+        
+        start_time = time.time()
+        try:
+            response = groq_client.generate_response(
+                conversations[session_id], 
+                language=language
+            )
+        except Exception as e:
+            logger.error(f"Groq API error: {str(e)}")
+            return jsonify({"error": "Failed to generate response"}), 500
+
+        end_time = time.time()
+        
+        conversations[session_id].append({"role": "assistant", "content": response})
+        
+        return jsonify({
+            "response": response,
+            "sessionId": session_id,
+            "processingTime": round(end_time - start_time, 2)
+        })
+
+    except Exception as e:
+        logger.error(f"Chat error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/audio', methods=['POST'])
 def process_audio():
     """Handle audio input, transcribe it, and get a response."""
-    audio_file = request.files.get('audio')
-    session_id = request.form.get('sessionId', str(uuid.uuid4()))
-    language = request.form.get('language', 'en')
-    
-    if not audio_file:
-        return jsonify({"error": "No audio file provided"}), 400
-    
-    # Save audio file temporarily
-    temp_path = f"temp_{uuid.uuid4()}.webm"
-    audio_file.save(temp_path)
-    
+    temp_path = None
     try:
-        # Transcribe audio
-        transcription = transcribe_audio(temp_path, language)
+        audio_file = request.files.get('audio')
+        if not audio_file:
+            return jsonify({"error": "No audio file provided"}), 400
+
+        session_id = validate_session(request.form.get('sessionId'))
+        language = request.form.get('language', 'en')
         
-        # Get or create conversation history
+        temp_path = f"temp_{uuid.uuid4()}.webm"
+        audio_file.save(temp_path)
+        
+        transcription = transcribe_audio(temp_path, language)
+        if not transcription:
+            return jsonify({"error": "Failed to transcribe audio"}), 500
+
         if session_id not in conversations:
             conversations[session_id] = []
         
-        # Add transcribed message to history
         conversations[session_id].append({"role": "user", "content": transcription})
         
-        # Get response from Groq
         start_time = time.time()
         response = groq_client.generate_response(
             conversations[session_id],
@@ -86,7 +122,6 @@ def process_audio():
         )
         end_time = time.time()
         
-        # Add assistant response to history
         conversations[session_id].append({"role": "assistant", "content": response})
         
         return jsonify({
@@ -96,46 +131,67 @@ def process_audio():
             "processingTime": round(end_time - start_time, 2)
         })
     
+    except Exception as e:
+        logger.error(f"Audio processing error: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    
     finally:
-        # Clean up temporary file
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
+        if temp_path and os.path.exists(temp_path):
+            try:
+                os.remove(temp_path)
+            except Exception as e:
+                logger.error(f"Failed to remove temporary file: {str(e)}")
 
 @app.route('/api/image', methods=['POST'])
 def process_image_request():
     """Handle image input, analyze it, and get a response."""
-    image_data = request.json.get('image', '')
-    prompt = request.json.get('prompt', 'Describe this image')
-    session_id = request.json.get('sessionId', str(uuid.uuid4()))
-    language = request.json.get('language', 'en')
-    
-    # Decode base64 image
-    if not image_data or not image_data.startswith('data:image'):
-        return jsonify({"error": "Invalid image data"}), 400
-    
     try:
-        # Process the image
-        image_description = process_image(image_data)
+        data = request.json
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+
+        image_data = data.get('image', '')
+        prompt = data.get('prompt', 'Describe this image').strip()
+        session_id = validate_session(data.get('sessionId'))
+        language = data.get('language', 'en')
         
-        # Combine prompt with image description
-        combined_prompt = f"{prompt}\n\nImage content: {image_description}"
+        # Validate image data
+        if not image_data:
+            return jsonify({"error": "Image data is required"}), 400
+        if not isinstance(image_data, str):
+            return jsonify({"error": "Image data must be a string"}), 400
+        if not image_data.startswith('data:image'):
+            return jsonify({"error": "Invalid image format. Must be base64 encoded data URL"}), 400
         
-        # Get or create conversation history
+        # Process the image with error handling
+        try:
+            image_description = process_image(image_data)
+            if not image_description:
+                return jsonify({"error": "Failed to process image"}), 500
+        except Exception as e:
+            logger.error(f"Image processing error: {str(e)}")
+            return jsonify({"error": "Failed to process image"}), 500
+
+        # Initialize conversation if needed
         if session_id not in conversations:
             conversations[session_id] = []
         
-        # Add image prompt to history
+        combined_prompt = f"{prompt}\n\nImage content: {image_description}"
         conversations[session_id].append({"role": "user", "content": combined_prompt})
         
-        # Get response from Groq
+        # Generate response with error handling
         start_time = time.time()
-        response = groq_client.generate_response(
-            conversations[session_id],
-            language=language
-        )
+        try:
+            response = groq_client.generate_response(
+                conversations[session_id],
+                language=language
+            )
+        except Exception as e:
+            logger.error(f"Groq API error: {str(e)}")
+            return jsonify({"error": "Failed to generate response"}), 500
+
         end_time = time.time()
         
-        # Add assistant response to history
         conversations[session_id].append({"role": "assistant", "content": response})
         
         return jsonify({
@@ -145,7 +201,8 @@ def process_image_request():
         })
     
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logger.error(f"Image request error: {str(e)}")
+        return jsonify({"error": "An unexpected error occurred"}), 500
 
 @app.route('/api/languages', methods=['GET'])
 def get_languages():
@@ -169,14 +226,33 @@ def get_languages():
 @app.route('/api/clear', methods=['POST'])
 def clear_conversation():
     """Clear conversation history for a session."""
-    data = request.json
-    session_id = data.get('sessionId')
-    
-    if session_id and session_id in conversations:
-        conversations[session_id] = []
-        return jsonify({"status": "Conversation cleared"})
-    
-    return jsonify({"error": "Session not found"}), 404
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+            
+        session_id = data.get('sessionId')
+        if not session_id:
+            return jsonify({"error": "Session ID is required"}), 400
+        
+        if session_id in conversations:
+            conversations[session_id] = []
+            return jsonify({
+                "status": "success",
+                "message": "Conversation cleared successfully"
+            })
+        
+        return jsonify({
+            "status": "error",
+            "message": "Session not found"
+        }), 404
+        
+    except Exception as e:
+        logger.error(f"Clear conversation error: {str(e)}")
+        return jsonify({
+            "status": "error",
+            "message": "Failed to clear conversation"
+        }), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
