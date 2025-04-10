@@ -1,8 +1,8 @@
 # 🌐 GroqVerse – The Universal AI Chatbot
 
-![GroqVerse Banner](https://via.placeholder.com/1000x300?text=GroqVerse+AI+Chatbot)
 
-GroqVerse is a powerful AI chatbot that responds like a human (just like ChatGPT) and supports **any language in the world**. Built using HTML, CSS, JavaScript, and Python (Flask), it also enables **voice input** and **image understanding** via the Groq API — all packed into a beautiful, responsive website.
+
+GroqVerse is a powerful AI chatbot that responds like a human and supports **any language in the world**. Built using HTML, CSS, JavaScript, and Python (Flask), it also enables **voice input** and **image understanding** via the Groq API — all packed into a beautiful, responsive website.
 
 ---
 
