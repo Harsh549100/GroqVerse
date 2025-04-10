@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: groqverse
+    env: python
+    plan: free
+    buildCommand: ""
+    startCommand: "python backend/app.py"
+    envVars:
+      - key: GROQ_API_KEY
+        value: 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
