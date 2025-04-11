@@ -3,8 +3,10 @@ services:
     name: groqverse
     env: python
     plan: free
-    buildCommand: ""
-    startCommand: "python backend/app.py"
+    buildCommand: |
+      apt-get update && apt-get install -y ffmpeg
+      pip install -r requirements.txt
+    startCommand: gunicorn backend.app:app --bind 0.0.0.0:$PORT
     envVars:
       - key: GROQ_API_KEY
         value: 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
