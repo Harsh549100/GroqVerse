@@ -4,9 +4,11 @@ services:
     env: python
     plan: free
     buildCommand: |
-      apt-get update && apt-get install -y ffmpeg
+      curl -L https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz -o ffmpeg.tar.xz
+      tar -xf ffmpeg.tar.xz
+      cp ffmpeg-*-amd64-static/ffmpeg /usr/local/bin/
       pip install -r requirements.txt
-    startCommand: gunicorn backend.app:app --bind 0.0.0.0:$PORT
+    startCommand: "python backend/app.py"
     envVars:
       - key: GROQ_API_KEY
-        value: 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
+        value: your_real_key_here
