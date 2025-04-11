@@ -484,7 +484,7 @@ async function sendMessage() {
         showTypingIndicator();
         
         // Send to backend
-        const response = await fetch('https://groqverse-production.up.railway.app/api/chat', {
+        const response = await fetch('http://localhost:5000/api/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
