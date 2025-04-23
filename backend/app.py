@@ -259,19 +259,19 @@ def clear_conversation():
             "message": "Failed to clear conversation"
         }), 500
 
-@app.route("/", methods=["GET"])
-def home():
-    return jsonify({"message": "GroqVerse backend is running!"})
+
 
 # Serve frontend HTML
-@app.route('/')
-def serve_index():
-    return send_from_directory('frontend', 'index.html')
+@app.route("/", methods=["GET"])
+def serve_frontend():
+    return send_from_directory('../frontend', 'index.html')
 
-# Serve static files (CSS, JS)
 @app.route('/<path:path>')
 def serve_static(path):
-    return send_from_directory('frontend', path)
+    return send_from_directory('../frontend', path)
+
+
+
 
 
 if __name__ == '__main__':
