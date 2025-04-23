@@ -435,7 +435,7 @@ function showNotification(message, type = 'info') {
 // Load supported languages
 async function loadLanguages() {
     try {
-        const response = await fetch('http://localhost:5000/api/languages');
+        const response = await fetch('http://localhost:8080/api/languages');
         const languages = await response.json();
         
         // Populate language selector
