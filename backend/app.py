@@ -2,7 +2,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(__file__))
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
+
 from flask_cors import CORS
 import os
 import uuid
@@ -261,6 +262,17 @@ def clear_conversation():
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "GroqVerse backend is running!"})
+
+# Serve frontend HTML
+@app.route('/')
+def serve_index():
+    return send_from_directory('frontend', 'index.html')
+
+# Serve static files (CSS, JS)
+@app.route('/<path:path>')
+def serve_static(path):
+    return send_from_directory('frontend', path)
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
