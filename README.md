@@ -59,7 +59,7 @@ GroqVerse runs entirely on your machine. No conversations are stored or sent to 
 
 ## 👨‍💻 Author
 
-**Harsh**, B.Tech CSE (IEP SAP) Student  
+**Harsh Shrivastava**, B.Tech CSE (IEP SAP) Student  
 Built for **Hackazard 2025**
 
 ## 🤖 Powered By
